@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# tinp-cli.py
+# model.py
 #
 # Copyright 2014 Carlos Cesar Caballero Diaz <ccesar@linuxmail.org>
 #
