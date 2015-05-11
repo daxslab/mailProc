@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    Copyright (C) 2015 Carlos Cesar Caballero Diaz <ccesar@linuxmail.org>
+#    Copyright (C) 2015 Carlos Cesar Caballero Diaz <ccesar@nauta.cu>
 #   
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,12 +23,15 @@ import os
 import sys
 import atexit
 
+from contrib.pydal import DAL, Field
+import datetime
+
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import imp
 
-from model import *
+# from model import *
 
 from smtplib import SMTPRecipientsRefused
 
@@ -133,7 +136,7 @@ class MailProcProcessor:
 class MailProc:
 
     def __init__(self):
-        self.db = db
+        self.db = None
 
         self.__service_log__ = 'DB'
         self.__service_log_enabled__ = True
@@ -280,7 +283,7 @@ class MailProc:
         """
         try:
             make_connection = poplib.POP3_SSL if use_ssl else poplib.POP3
-            s = make_connection(pop_address, pop_port) if smtp_port else make_connection(pop_address)
+            s = make_connection(pop_address, pop_port) if pop_port else make_connection(pop_address)
             s.user(pop_username)
             s.pass_(pop_password)
             if log == 'DEBUG':
@@ -441,9 +444,53 @@ class MailProc:
         :param value: Log value
         """
         if self.__service_log__ == 'DB':
-            add_db_log_entry(self.__service_name__, label, value)
+            self.add_db_log_entry(self.__service_name__, label, value)
         elif self.__service_log__ == 'CMD' or self.__service_log__ == 'DEBUG':
             print '%s %s %s' % (self.__service_name__, label, value)
+
+    def data_connect(self, **kwargs):
+        """
+        return a new database connection object
+        :param connection: DB connection string
+        :return: DB connection object
+        """
+        SQLITE_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "database/storage.sqlite")
+        if not 'connection'in kwargs:
+            db = DAL('sqlite://'+SQLITE_FILE, **kwargs)
+        else:
+            connection = kwargs['connection']
+            kwargs.pop('connection', None)
+            db = DAL(connection, **kwargs)
+        return db
+
+    def instance_tables(self, db):
+        """
+        Instance deafault loging tables in database
+        :param db: DB connection object
+        """
+        db.define_table('log',
+                        Field('source'),
+                        Field('label'),
+                        Field('value'),
+                        Field('date', 'datetime', default=datetime.datetime.now())
+                        )
+
+        def add_db_log_entry(source, label, value):
+            db.log.insert(source=source, label=label, value=value)
+            db.commit()
+        self.add_db_log_entry = add_db_log_entry
+
+        def get_logs(source=None, label=None):
+            if not source and not label:
+                query = db.log.source
+            elif source and not label:
+                query = db.log.source == source
+            elif not source and label:
+                query = db.log.label == label
+            else:
+                query = (db.log.source == source) & (db.log.label == label)
+            return db(query).select()
+        self.get_logs = get_logs
 
 
 def add(service_name):
@@ -485,6 +532,9 @@ class %s(MailProc):
         self.__service_version__ = __service_version__
         self.__service_log__ = __service_log__
 
+        self.db = self.data_connect()
+        self.instance_tables(self.db)
+
     def run(self):
         mails = self.get_new_mails(mail_server, mail_user, mail_password, use_ssl=False)
         self.process(mails, self.action)
@@ -499,18 +549,12 @@ class %s(MailProc):
     service_file.write(service_file_template)
 
 
-
-
-def gettext(s):
-    return lookup.get(s, s)
-
-
 def main():
 
     prog = 'mailproc'
     version = '%(prog)s 0.2.1'
     description = 'Mail services creation microframework.'
-    epilog = version+' - (C) 2015 Carlos Cesar Caballero Díaz'
+    epilog = version+' - (C) 2015 Carlos Cesar Caballero Díaz, a Daxlab project.'
 
     import argparse
 
@@ -522,15 +566,10 @@ def main():
     parser.add_argument('--version', action='version', version=version,
                         help='show program\'s version number and exit')
     parser.add_argument('-a', '--add', action='store', default=False, dest='add',
-                        metavar='Service name',
+                        metavar="'Service name'",
                         help='Create a new service base template')
 
     args = parser.parse_args()
-    # if not args.custom_repository:
-    #     parser.error('You need to specify the working path, run again with the --help option')
-    # else:
-    #     if not args.add and not args.add_section and not args.remove and not args.upgrade:
-    #         parser.error('Arguments error, run again with the --help option')
 
     start(args)
 
