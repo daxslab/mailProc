@@ -138,15 +138,15 @@ class MailProc:
     def __init__(self):
         self.db = None
 
-        self.__service_log__ = 'DB'
-        self.__service_log_enabled__ = True
+        self.__service_log__ = 'CMD'
+        self.__service_log_enabled__ = False
 
         self.__service_name__ = 'Default'
 
     def set_log_type(self, type):
         """
         Set service log type
-        :param type: service log type ('DB', 'CMD', 'file', 'None')
+        :param type: service log type ('DB', 'CMD', 'file')
         """
         self.__service_log__ = type
 
@@ -157,8 +157,17 @@ class MailProc:
         """
         return self.__service_log__
 
+    def enable_log(self):
+        self.__service_log_enabled__ = True
+
+    def enable_log_debuging(self):
+        self.__service_log_enabled__ = 'DEBUG'
+
+    def disable_log(self):
+        self.__service_log_enabled__ = False
+
     def get_new_mails(self, imap_server, imap_username, imap_password, imap_port=None, use_ssl=True,
-                      get_msgs_type='(UNSEEN)', delete=False, log=False):
+                      get_msgs_type='(UNSEEN)', delete=False):
         """
         Returns new unseen mails from account
         :param imap_server: IMAP server address
@@ -168,11 +177,10 @@ class MailProc:
         :param use_ssl: Use secure SSL connection (default True)
         :param get_msgs_type: Expression for emails to get '(UNSEEN)' by default to get new emails
         :param delete: Delete obtained emails in account (default False)
-        :param log: Enable log (default False)
         :return: List of emails objects
         """
 
-        imap = self.imap_connect(imap_server, imap_username, imap_password, imap_port=imap_port, use_ssl=use_ssl, log=log)
+        imap = self.imap_connect(imap_server, imap_username, imap_password, imap_port=imap_port, use_ssl=use_ssl)
 
         imap.select('INBOX')
 
@@ -200,7 +208,7 @@ class MailProc:
 
         return mails
 
-    def imap_connect(self, imap_server, imap_username, imap_password, imap_port=None, use_ssl=True, log=False):
+    def imap_connect(self, imap_server, imap_username, imap_password, imap_port=None, use_ssl=True):
         """
         Creates a new IMAP connection
         :param imap_server: IMAP server address
@@ -208,7 +216,6 @@ class MailProc:
         :param imap_password: IMAP account password
         :param imap_port: IMAP server port
         :param use_ssl: Use secure SSL connection (default True)
-        :param log: Enable log (default False)
         :return: IMAP connection object
         """
         try:
@@ -219,12 +226,12 @@ class MailProc:
 
             imap_connection.login(imap_username, imap_password)
 
-            if log == 'DEBUG':
+            if self.__service_log_enabled__ == 'DEBUG':
                 self.log('CONNECT', 'IMAP connection to %s for %s' % (imap_server, imap_username))
 
             return imap_connection
         except Exception as e:
-            if log:
+            if self.__service_log_enabled__:
                 self.log('ERROR', 'IMAP connection to %s for %s, %s' % (imap_server, imap_username, e.message))
             return None
 
@@ -236,14 +243,13 @@ class MailProc:
         connection.close()
         connection.logout()
     
-    def smtp_connect(self, smtp_address, smtp_username=None, smtp_password=None, log=False,
+    def smtp_connect(self, smtp_address, smtp_username=None, smtp_password=None,
                      smtp_port=None, use_ssl=True):
         """
         Creates a new SMTP connection
         :param smtp_address: SMTP server address
         :param smtp_username: SMTP username
         :param smtp_password: SMTP password
-        :param log: Enable log (default False)
         :param smtp_port: SMTP server port
         :param use_ssl: Use secure SSL connection (default True)
         :return: SMTP connection object
@@ -253,11 +259,11 @@ class MailProc:
             s = make_connection(smtp_address, smtp_port) if smtp_port else make_connection(smtp_address)
             if smtp_username:
                 s.login(smtp_username, smtp_password)
-            if log == 'DEBUG':
+            if self.__service_log_enabled__ == 'DEBUG':
                 self.log('CONNECT', 'SMTP connection to %s for %s' % (smtp_address, smtp_username))
             return s
         except Exception as e:
-            if log:
+            if self.__service_log_enabled__:
                 self.log('ERROR', 'SMTP connection to %s for %s, %s' % (smtp_address, smtp_username, e.message))
             return None
 
@@ -269,14 +275,13 @@ class MailProc:
         """
         connection.quit()
 
-    def pop_connect(self, pop_address, pop_username, pop_password, log=False,
+    def pop_connect(self, pop_address, pop_username, pop_password,
                      pop_port=None, use_ssl=True):
         """
         Creates a new POP3 connection
         :param pop_address: POP3 server address
         :param pop_username: POP3 username
         :param pop_password: POP3 password
-        :param log: Enable log (default False)
         :param pop_port: POP3 server port
         :param use_ssl: Use secure SSL connection (default True)
         :return: POP3 connection object
@@ -286,11 +291,11 @@ class MailProc:
             s = make_connection(pop_address, pop_port) if pop_port else make_connection(pop_address)
             s.user(pop_username)
             s.pass_(pop_password)
-            if log == 'DEBUG':
+            if self.__service_log_enabled__ == 'DEBUG':
                 self.log('CONNECT', 'POP3 connection to %s for %s' % (pop_address, pop_username))
             return s
         except Exception as e:
-            if log:
+            if self.__service_log_enabled__:
                 self.log('ERROR', 'POP3 connection to %s for %s, %s' % (pop_address, pop_username, e.message))
             return None
 
@@ -305,7 +310,7 @@ class MailProc:
 
 
     def send_email(self, smtp_address, email_from, email_to,
-                    email_subject, email_text, email_html=None, email_encode='utf-8', log=False,
+                    email_subject, email_text, email_html=None, email_encode='utf-8', log=None,
                     smtp_port=None, smtp_username=None, smtp_password=None, use_ssl=True):
         """
         Send an email message with text only or multipart HTML body
@@ -316,7 +321,7 @@ class MailProc:
         :param email_text: Text only mail body
         :param email_html: HTML mail body
         :param email_encode: Email encode (default utf-8)
-        :param log: Log message (default False, None for default logging messages)
+        :param log: Log message (default None)
         :param smtp_port: SMTP server port
         :param smtp_username: SMTP username
         :param smtp_password: SMTP password
@@ -340,7 +345,7 @@ class MailProc:
                 msg.attach(part2)
 
             s = self.smtp_connect(smtp_address, smtp_username=smtp_username,
-                                  smtp_password=smtp_password, log=log,
+                                  smtp_password=smtp_password,
                                   smtp_port=smtp_port, use_ssl=use_ssl)
 
             if not s:
@@ -348,24 +353,23 @@ class MailProc:
 
             s.sendmail(email_from, [email_to], msg.as_string())
 
-            if log is not False:
-                if not log:
-                    log = email_to
-                self.log('SEND', log)
+            if not log:
+                log = email_to
+            self.log('SEND', log)
 
             self.smtp_close(s)
 
         except SMTPRecipientsRefused as e:
-            if log is not False:
+            if self.__service_log_enabled__:
                 for addresses in e:
                     for address in addresses:
                         self.log('ERROR', 'Rejected sender address %s' % address)
         except Exception as e:
-            if log is not False:
+            if self.__service_log_enabled__:
                 self.log('ERROR', 'Error sending email to %s: %s'+e.message % email_to)
 
     def send_two_part_email(self, smtp_address, smtp_username, smtp_password, email_from, email_to,
-                            email_subject, email_text, email_html, email_encode='utf-8', log=False,
+                            email_subject, email_text, email_html, email_encode='utf-8', log=None,
                             smtp_port=None, use_ssl=True):
         """
         Send a multi part email message with text only and HTML body
@@ -378,7 +382,7 @@ class MailProc:
         :param email_text: Text only mail body
         :param email_html: HTML mail body
         :param email_encode: Email encode (default utf-8)
-        :param log: Log message (default False, None for default logging messages)
+        :param log: Log message (default None)
         :param smtp_port: SMTP server port
         :param use_ssl: Use secure SSL connection (default True)
         """
@@ -399,7 +403,7 @@ class MailProc:
             msg.attach(part1)
             msg.attach(part2)
 
-            s = self.smtp_connect(smtp_address, smtp_username, smtp_password, log=True,
+            s = self.smtp_connect(smtp_address, smtp_username, smtp_password,
                                   smtp_port=smtp_port, use_ssl=use_ssl)
 
             if not s:
@@ -407,15 +411,15 @@ class MailProc:
 
             s.sendmail(email_from, [email_to], msg.as_string())
 
-            if log is not False:
-                if not log:
-                    log = email_to
-                self.log('SEND', log)
+
+            if not log:
+                log = email_to
+            self.log('SEND', log)
 
             self.smtp_close(s)
 
         except Exception as e:
-            if log is not False:
+            if self.__service_log_enabled__:
                 self.log('ERROR', 'Error sending two-part email to %s: '+e.message % email_to)
 
 
@@ -428,13 +432,14 @@ class MailProc:
         try:
             for mail in mails:
 
-                if self.__service_log__ == 'DEBUG':
+                if self.__service_log_enabled__ == 'DEBUG':
                     self.log('PROCESS', 'Processing function %s on mail %s' % (function.__name__, str(mail)))
 
                 function(mail)
 
         except Exception as e:
-            self.log('ERROR', 'Processing error: %s' % e.message)
+            if self.__service_log_enabled__:
+                self.log('ERROR', 'Processing error: %s' % e.message)
 
     def log(self, label, value):
         """
@@ -520,6 +525,7 @@ __service_name__ = '%s'
 __service_version__ = '0.1'
 __service_log__ = 'CMD' # change to 'DB' for production
 
+# mail server config
 mail_server = ''
 mail_user = ''
 mail_password = ''
@@ -527,11 +533,19 @@ mail_password = ''
 class %s(MailProc):
 
     def __init__(self):
+
+        # init framework parent class
         MailProc.__init__(self)
+
+        # service info
         self.__service_name__ = __service_name__
         self.__service_version__ = __service_version__
-        self.__service_log__ = __service_log__
 
+        # enable logging
+        self.set_log_type(__service_log__)
+        self.enable_log()
+
+        # instance database and default logging tables and functions
         self.db = self.data_connect()
         self.instance_tables(self.db)
 
