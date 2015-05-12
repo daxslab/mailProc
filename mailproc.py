@@ -450,7 +450,7 @@ class MailProc:
         """
         if self.__service_log__ == 'DB':
             self.add_db_log_entry(self.__service_name__, label, value)
-        elif self.__service_log__ == 'CMD' or self.__service_log__ == 'DEBUG':
+        elif self.__service_log__ == 'CMD':
             print '%s %s %s' % (self.__service_name__, label, value)
 
     def data_connect(self, **kwargs):
