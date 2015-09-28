@@ -308,7 +308,6 @@ class MailProc:
 
         connection.quit()
 
-
     def send_email(self, smtp_address, email_from, email_to,
                     email_subject, email_text, email_html=None, email_encode='utf-8', log=None,
                     smtp_port=None, smtp_username=None, smtp_password=None, use_ssl=True):
@@ -422,20 +421,19 @@ class MailProc:
             if self.__service_log_enabled__:
                 self.log('ERROR', 'Error sending two-part email to %s: '+e.message % email_to)
 
-
-    def process(self, mails, function):
+    def process(self, mails, function, *args):
         """
         Email processing hook, apply a processing function to any email in a list
         :param mails: List of emails
         :param function: Processing function
+        :param args: Params for processing function
         """
         try:
             for mail in mails:
 
                 if self.__service_log_enabled__ == 'DEBUG':
                     self.log('PROCESS', 'Processing function %s on mail %s' % (function.__name__, str(mail)))
-
-                function(mail)
+                function(mail, *args)
 
         except Exception as e:
             if self.__service_log_enabled__:
