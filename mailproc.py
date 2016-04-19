@@ -22,6 +22,8 @@ import email
 import os
 import sys
 import atexit
+import json
+import base64
 
 from contrib.pydal import DAL, Field
 import datetime
@@ -420,6 +422,48 @@ class MailProc:
         except Exception as e:
             if self.__service_log_enabled__:
                 self.log('ERROR', 'Error sending two-part email to %s: '+e.message % email_to)
+
+    def get_json_attachment(self, mail, attachment_name=None, attachment_content_type=None, base64_decode=False):
+        """
+        Return a json object stored in attachment
+        :param mail: email object
+        :param attachment_name: name of attachment file to find
+        :param attachment_content_type: content type of attachment file to find
+        :param base64_decode: if true looks for a base64 encoded json file
+        :return: json object stored in email attachment
+        """
+        if mail.get_content_maintype() != 'multipart':
+            return False
+
+        for part in mail.walk():
+            if part.get_content_maintype() == 'multipart':
+                continue
+            if part.get('Content-Disposition') is None:
+                continue
+
+            # attachment filename
+            filename = part.get_filename()
+            if attachment_name and filename != attachment_name:
+                continue
+
+            # attachment content type
+            content_type = part.get_content_type()
+            if attachment_content_type and content_type != attachment_content_type:
+                continue
+
+            # attachment decoded body
+            body = part.get_payload(decode=True)
+
+            if base64_decode:
+                body = base64.b64decode(body)
+
+            # check if is a json string
+            try:
+                return json.loads(body)
+            except ValueError, e:
+                continue
+
+        return False
 
     def process(self, mails, function, *args):
         """
