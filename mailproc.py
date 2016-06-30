@@ -24,13 +24,20 @@ import sys
 import atexit
 import json
 import base64
+import gzip
+import StringIO
 
 from contrib.pydal import DAL, Field
 import datetime
 
 import smtplib
+import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.message import *
+from email import encoders
+import email.header
 import imp
 
 # from model import *
@@ -109,7 +116,6 @@ class MailProcProcessor:
         for folder in self.service_folder:
             possible_services = os.listdir(folder)
             for i in possible_services:
-                # print i
                 location = os.path.join(folder, i)
                 if not os.path.isdir(location) or not self.main_service + ".py" in os.listdir(location):
                     continue
@@ -192,8 +198,8 @@ class MailProc:
         mails = []
         for e_id in unread_msg_nums:
             _, response = imap.fetch(e_id, '(RFC822)')
-            # print response
-            email_message = email.message_from_string(response[0][1])
+            email_message = Email(email.message_from_string(response[0][1]), self)
+
             mails.append(email_message)
 
         # Post Process
@@ -311,8 +317,10 @@ class MailProc:
         connection.quit()
 
     def send_email(self, smtp_address, email_from, email_to,
-                    email_subject, email_text, email_html=None, email_encode='utf-8', log=None,
-                    smtp_port=None, smtp_username=None, smtp_password=None, use_ssl=True):
+                   email_subject, email_text, email_html=None, email_encode='utf-8', log=None,
+                   smtp_port=None, smtp_username=None, smtp_password=None, use_ssl=True,
+                   json_attachment=None, json_attachment_filename='attachment.json',
+                   json_attachment_base64_encode=False, json_attachment_gzip=False):
         """
         Send an email message with text only or multipart HTML body
         :param smtp_address: SMTP server address
@@ -327,32 +335,71 @@ class MailProc:
         :param smtp_username: SMTP username
         :param smtp_password: SMTP password
         :param use_ssl: Use secure SSL connection (default True)
+        :param json_attachment: JSON Object to send as a JSON attachment file
+        :param json_attachment_filename: JSON attachment filename (default attachment.json)
+        :param json_attachment_base64_encode: Apply a base64 encode to JSON file (default False)
+        :param json_attachment_gzip: Send JSON attachment as gzip file (default False)
         """
         try:
-            msg = MIMEMultipart('alternative') if email_html else MIMEText(email_text, 'plain', email_encode)
+            msg_root = MIMEMultipart()
 
-            msg['Subject'] = email_subject
-            msg['From'] = email_from
-            msg['To'] = email_to
+            msg_root['Subject'] = email_subject
+            msg_root['From'] = email_from
+            msg_root['To'] = email_to
 
             if email_html:
+                msg_alternative = MIMEMultipart('alternative')
                 text = email_text
                 html = email_html
 
                 part1 = MIMEText(text, 'plain', email_encode)
                 part2 = MIMEText(html, 'html', email_encode)
 
-                msg.attach(part1)
-                msg.attach(part2)
+                msg_alternative.attach(part1)
+                msg_alternative.attach(part2)
+
+                msg_root.attach(msg_alternative)
+
+            else:
+                msg_root.attach(MIMEText(email_text, 'plain', email_encode))
+
+            if json_attachment:
+
+                json_string = json.dumps(json_attachment)
+
+                if json_attachment_base64_encode:
+                    json_string = base64.encodestring(json_string)
+
+                if json_attachment_gzip:
+                    out = StringIO.StringIO()
+                    f = gzip.GzipFile(fileobj=out, mode="w")
+                    f.write(json_string)
+                    f.close()
+                    out.seek(0)
+                    json_string = out.read()
+
+                    attachment = MIMEBase('application', 'x-gzip')
+                    attachment.set_payload(json_string)
+                    encoders.encode_base64(attachment)
+                    attachment.add_header('Content-Disposition', 'attachment',
+                                          filename=json_attachment_filename)
+                    msg_root.attach(attachment)
+
+                else:
+                    attachment = MIMEText(json_string)
+                    attachment.add_header('Content-Disposition', 'attachment', filename=json_attachment_filename)
+                    msg_root.attach(attachment)
 
             s = self.smtp_connect(smtp_address, smtp_username=smtp_username,
                                   smtp_password=smtp_password,
                                   smtp_port=smtp_port, use_ssl=use_ssl)
 
             if not s:
+                if self.__service_log_enabled__:
+                    self.log('ERROR', 'Error connecting to smtp server')
                 return
 
-            s.sendmail(email_from, [email_to], msg.as_string())
+            s.sendmail(email_from, [email_to], msg_root.as_string())
 
             if not log:
                 log = email_to
@@ -367,13 +414,13 @@ class MailProc:
                         self.log('ERROR', 'Rejected sender address %s' % address)
         except Exception as e:
             if self.__service_log_enabled__:
-                self.log('ERROR', 'Error sending email to %s: %s'+e.message % email_to)
+                self.log('ERROR', 'Error sending email to %s: %s' % (email_to, e.message))
 
     def send_two_part_email(self, smtp_address, smtp_username, smtp_password, email_from, email_to,
                             email_subject, email_text, email_html, email_encode='utf-8', log=None,
                             smtp_port=None, use_ssl=True):
         """
-        Send a multi part email message with text only and HTML body
+        Deprecated. Send a multi part email message with text only and HTML body
         :param smtp_address: SMTP server address
         :param smtp_username: SMTP username
         :param smtp_password: SMTP password
@@ -412,7 +459,6 @@ class MailProc:
 
             s.sendmail(email_from, [email_to], msg.as_string())
 
-
             if not log:
                 log = email_to
             self.log('SEND', log)
@@ -422,48 +468,6 @@ class MailProc:
         except Exception as e:
             if self.__service_log_enabled__:
                 self.log('ERROR', 'Error sending two-part email to %s: '+e.message % email_to)
-
-    def get_json_attachment(self, mail, attachment_name=None, attachment_content_type=None, base64_decode=False):
-        """
-        Return a json object stored in attachment
-        :param mail: email object
-        :param attachment_name: name of attachment file to find
-        :param attachment_content_type: content type of attachment file to find
-        :param base64_decode: if true looks for a base64 encoded json file
-        :return: json object stored in email attachment
-        """
-        if mail.get_content_maintype() != 'multipart':
-            return False
-
-        for part in mail.walk():
-            if part.get_content_maintype() == 'multipart':
-                continue
-            if part.get('Content-Disposition') is None:
-                continue
-
-            # attachment filename
-            filename = part.get_filename()
-            if attachment_name and filename != attachment_name:
-                continue
-
-            # attachment content type
-            content_type = part.get_content_type()
-            if attachment_content_type and content_type != attachment_content_type:
-                continue
-
-            # attachment decoded body
-            body = part.get_payload(decode=True)
-
-            if base64_decode:
-                body = base64.b64decode(body)
-
-            # check if is a json string
-            try:
-                return json.loads(body)
-            except ValueError, e:
-                continue
-
-        return False
 
     def process(self, mails, function, *args):
         """
@@ -486,7 +490,6 @@ class MailProc:
     def log(self, label, value):
         """
         Adds a new log entry
-        :param service: Main service object
         :param label: Log label
         :param value: Log value
         """
@@ -512,7 +515,7 @@ class MailProc:
 
     def instance_tables(self, db):
         """
-        Instance deafault loging tables in database
+        Instance default logging tables in database
         :param db: DB connection object
         """
         db.define_table('log',
@@ -538,6 +541,141 @@ class MailProc:
                 query = (db.log.source == source) & (db.log.label == label)
             return db(query).select()
         self.get_logs = get_logs
+
+
+class Email(Message):
+
+    def __init__(self, message, mailproc):
+        self._headers = message._headers
+        self._unixfrom = message._unixfrom
+        self._payload = message._payload
+        self._charset = message._charset
+        # Defaults for multipart messages
+        self.preamble = message.preamble
+        self.epilogue = message.epilogue
+        self.defects = message.defects
+        # Default content type
+        self._default_type = message._default_type
+
+        self.mailproc = mailproc
+
+    def _walk_email(self):
+        for part in self.walk():
+            if part.get_content_type() == "multipart/alternative":
+                continue
+            yield part
+
+    @staticmethod
+    def decode_mime_words(s):
+        """
+        Return a decoded mime header string
+        :param s: String to decode
+        :return: Decoded string
+        """
+        return u''.join(
+            word.decode(encoding or 'utf8') if isinstance(word, bytes) else word
+            for word, encoding in email.header.decode_header(s))
+
+    def get_from(self):
+        """
+        Return the raw From header
+        :return: From header string
+        """
+        return self['From']
+
+    def get_from_address(self):
+        """
+        Return From header email address
+        :return: From email address string
+        """
+        return email.utils.parseaddr(self.get_from())[1]
+
+    def get_from_name(self, decode=True):
+        """
+        Return email From header name
+        :param decode: If True, try to decode
+        :return: Email From header name string
+        """
+        name = email.utils.parseaddr(self.get_from())[0]
+        if decode:
+            name = self.decode_mime_words(name)
+        return name
+
+    def get_subject(self, decode=True):
+        """
+        Return email subject
+        :param decode: If True, try to decode
+        :return: Email subject string
+        """
+        subject = self['Subject']
+        if decode:
+            subject = self.decode_mime_words(subject)
+        return subject
+
+    def get_body(self, html=False):
+        content_type = "text/plain" if not html else "text/html"
+        body = ''
+        for part in self._walk_email():
+            if part.get_content_type() == content_type:
+                body += part.get_payload(decode=1)
+        return body
+
+
+    def get_json_attachment(self, attachment_name=None, attachment_content_type=None,
+                            base64_decode=False, gzipped=False):
+        """
+        Return a json object stored in attachment
+        :param attachment_name: name of attachment file to find
+        :param attachment_content_type: content type of attachment file to find
+        :param base64_decode: if true looks for a base64 encoded json file
+        :return: json object stored in email attachment
+        """
+        if self.get_content_maintype() != 'multipart':
+            return False
+
+        for part in self.walk():
+            if part.get_content_maintype() == 'multipart':
+                continue
+            if part.get('Content-Disposition') is None:
+                continue
+
+            # attachment filename
+            filename = part.get_filename()
+            if attachment_name and filename != attachment_name:
+                continue
+
+            # attachment content type
+            content_type = part.get_content_type()
+            if attachment_content_type and content_type != attachment_content_type:
+                continue
+
+            # attachment decoded body
+            body = part.get_payload(decode=True)
+
+            # decompress gzipped file
+            if gzipped:
+                try:
+                    infile = StringIO.StringIO()
+                    infile.write(body)
+                    f = gzip.GzipFile(fileobj=infile, mode="r")
+                    f.rewind()
+                    body = f.read()
+                except ValueError, e:
+                    self.mailproc.log('ERROR', 'get_json_attachment gzip error: %s' % e.message)
+                    continue
+
+            # decode base64
+            if base64_decode:
+                body = base64.b64decode(body)
+
+            # check if is a json string
+            try:
+                return json.loads(body)
+            except ValueError, e:
+                self.mailproc.log('ERROR', 'get_json_attachment json error: %s' % e.message)
+                continue
+
+        return False
 
 
 def add(service_name):
