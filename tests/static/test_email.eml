@@ -1,0 +1,30 @@
+X-Account-Key: account4
+X-UIDL: 0000315558336294
+X-Mozilla-Status: 0001
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Return-Path: <test@test.com>
+X-Original-To: test@test.com
+Delivered-To: test@test.com
+Received: from [192.168.55.28] (unknown [192.168.55.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: carlos.caballero)
+	by mail.test.com (Postfix) with ESMTPSA id 355A7E3
+	for <test@test.com>; Wed, 24 Jan 2018 11:51:15 -0500 (EST)
+To: Carlos Cesar Caballero Diaz <test@test.com>
+From: =?UTF-8?Q?Carlos_Cesar_Caballero_D=c3=adaz?=
+ <test@test.com>
+Subject: test email
+Message-ID: <d835e8c8-1927-7b74-3c7a-0c1a04fcebf2@cfg.jovenclub.cu>
+Date: Wed, 24 Jan 2018 11:51:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+
+test email body
+
+
