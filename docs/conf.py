@@ -146,7 +146,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'mailProc.tex', 'mailProc Documentation',
-     'Carlos Cesar Caballero Díaz', 'manual'),
+     u'Carlos Cesar Caballero Díaz', 'manual'),
 ]
 
 
