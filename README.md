@@ -5,6 +5,10 @@ Mail services creation microframework
 mailProc is a Python microframework for building email-bassed services. 
 The main goal is to easily automate email related tasks.
 
+## Where can I fin the docs?
+A prebuilt version of current documentation can be found in 
+http://mailproc.readthedocs.io/en/latest/
+
 ## Installing mailProc
 Mailproc can be installed using Pypi, so you can simply call:
 
