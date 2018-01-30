@@ -21,7 +21,6 @@ except ImportError:
 import atexit
 import logging
 import os
-import poplib
 import re
 import sys
 import tempfile
