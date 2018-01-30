@@ -1,3 +1,9 @@
+# Private testing main file
+main.py
+
+# Pycharm
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
