@@ -25,6 +25,9 @@ from email.mime.base import MIMEBase
 
 
 class BaseSenderTransport:
+    """
+    Base class for mailProc sender transports
+    """
     __metaclass__ = ABCMeta
 
     @abstractmethod

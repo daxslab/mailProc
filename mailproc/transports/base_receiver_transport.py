@@ -12,6 +12,9 @@ from abc import ABCMeta
 
 
 class BaseReceiverTransport:
+    """
+    Base class for mailProc receiver transports
+    """
     __metaclass__ = ABCMeta
 
     @abstractmethod
