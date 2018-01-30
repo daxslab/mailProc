@@ -52,8 +52,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'mailProc'
-copyright = '2018, Carlos Cesar Caballero Díaz'
-author = 'Carlos Cesar Caballero Díaz'
+copyright = u'2018, Daxslab'
+author = u'Carlos Cesar Caballero Díaz'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~~~~~~~
     Sender and Receiver transports
 
-    :copyright: (c) 2018 Carlos Cesar Caballero Diaz.
+    :copyright: (c) 2018 Daxslab.
     :license: LGPL, see LICENSE for more details.
 """
 

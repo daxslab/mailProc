@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~~~~~
     This module implements the base class for mailProc sender transports
 
-    :copyright: (c) 2018 Carlos Cesar Caballero Diaz.
+    :copyright: (c) 2018 Daxslab.
     :license: LGPL, see LICENSE for more details.
 """
 import sys

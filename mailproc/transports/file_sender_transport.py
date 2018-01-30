@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~~~~~
     This module implements the file sender transport class for mailProc.
 
-    :copyright: (c) 2018 Carlos Cesar Caballero Diaz.
+    :copyright: (c) 2018 Daxslab.
     :license: LGPL, see LICENSE for more details.
 """
 import datetime
