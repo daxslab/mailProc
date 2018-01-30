@@ -6,6 +6,9 @@
 Welcome to mailProc's documentation!
 ====================================
 
+mailProc is a Python microframework for building email-bassed services.
+The main goal is to easily automate email related tasks.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
