@@ -14,7 +14,7 @@ Mailproc can be installed using Pypi, so you can simply call:
 
 `pip install mailproc`
    
-You can also download the las version from releases and use it as any other python module
+You can also download the last version from releases and use it as any other python module
 
 ## Testing mailProc
 You can run mailProc tests using pytest running it from the project root:
