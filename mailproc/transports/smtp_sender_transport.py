@@ -11,15 +11,8 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-import base64
-import gzip
-import json
 import logging
 import smtplib
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 from mailproc.transports import BaseSenderTransport
 
