@@ -127,7 +127,7 @@ class Mailproc:
         A decorator that is used to register an action for a given rule and target
 
         :param rule: Match rule as string
-        :param rule_target: Target to be applied the given rule, can be 'from'
+        :param routes_target: Target to be applied the given rule, can be 'from'
                             or 'subject'
         """
         def decorator(f):
@@ -140,7 +140,7 @@ class Mailproc:
         """
         A decorator that is used to register an action for an email "From" address
 
-        :param rule: Match rule as string
+        :param route_str: Match rule as string
         """
         return self.route(route_str, 'from')
 
@@ -148,7 +148,7 @@ class Mailproc:
         """
         A decorator that is used to register an action for an email subject
 
-        :param rule: Match rule as string
+        :param route_str: Match rule as string
         """
         return self.route(route_str, 'subject')
 
