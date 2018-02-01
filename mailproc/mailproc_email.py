@@ -107,11 +107,12 @@ class Email(Message):
         """
         Return a json object stored in attachment
 
-        :param attachment_name: name of attachment file to find
-        :param attachment_content_type: content type of attachment file to find
-        :param base64_decode: if true looks for a base64 encoded json file
+        :param attachment_name: Name of attachment file to find
+        :param attachment_content_type: Content type of attachment file to find
+        :param base64_decode: If true looks for a base64 encoded json file
         :param gzipped: If true try to unzip an attachment gzip file
-        :return: json object stored in email attachment
+        :param email_encode: Encoding for treat body attachments. Default: 'utf-8'
+        :return: Json object stored in email attachment
         """
         if self.get_content_maintype() != 'multipart':
             return False
