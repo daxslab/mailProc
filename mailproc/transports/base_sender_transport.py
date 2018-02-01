@@ -31,20 +31,20 @@ class BaseSenderTransport:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def connect(self):
+    def connect(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def close(self):
+    def close(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def send_mail(self):
+    def send_mail(self, *args, **kwargs):
         pass
 
     def create_message(self, email_from, email_to, email_subject, email_text, email_html=None, email_encode='utf-8',
-                  json_attachment=None, json_attachment_filename='attachment.json',
-                  json_attachment_base64_encode=False, json_attachment_gzip=False):
+                       json_attachment=None, json_attachment_filename='attachment.json',
+                       json_attachment_base64_encode=False, json_attachment_gzip=False):
         """
         Send an email message with text only or multipart HTML body
 
@@ -87,7 +87,6 @@ class BaseSenderTransport:
 
             if sys.version_info >= (3, 0):
                 json_string = json_string.encode(email_encode)
-
 
             if json_attachment_base64_encode:
                 if sys.version_info >= (3, 0):
