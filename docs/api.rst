@@ -39,6 +39,10 @@ Receiver Transports
     :members:
     :inherited-members:
 
+.. autoclass:: mailproc.transports.ImapIdleReceiverTransport
+    :members:
+    :inherited-members:
+
 Sender Transports
 -----------------
 

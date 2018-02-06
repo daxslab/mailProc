@@ -12,6 +12,7 @@ from .base_receiver_transport import BaseReceiverTransport
 from .base_sender_transport import BaseSenderTransport
 
 from .imap_receiver_transport import ImapReceiverTransport
+from .imap_idle_receiver_transport import ImapIdleReceiverTransport
 
 from .smtp_sender_transport import SmtpSenderTransport
 
