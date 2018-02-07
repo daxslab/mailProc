@@ -15,6 +15,7 @@ The main goal is to easily automate email related tasks.
 
    installation
    quickstart
+   transports
    deployment
    api
 

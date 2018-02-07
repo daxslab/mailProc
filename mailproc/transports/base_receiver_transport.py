@@ -19,12 +19,21 @@ class BaseReceiverTransport:
 
     @abstractmethod
     def connect(self):
+        """
+        Abstract connect function
+        """
         pass
 
     @abstractmethod
     def close(self):
+        """
+        Abstract close function
+        """
         pass
 
     @abstractmethod
     def get_mails(self):
+        """
+        Abstract get_mails function
+        """
         pass

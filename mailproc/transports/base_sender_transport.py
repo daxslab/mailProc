@@ -32,14 +32,23 @@ class BaseSenderTransport:
 
     @abstractmethod
     def connect(self, *args, **kwargs):
+        """
+        Abstract connect function
+        """
         pass
 
     @abstractmethod
     def close(self, *args, **kwargs):
+        """
+        Abstract close function
+        """
         pass
 
     @abstractmethod
     def send_mail(self, *args, **kwargs):
+        """
+        Abstract send_mail function
+        """
         pass
 
     def create_message(self, email_from, email_to, email_subject, email_text, email_html=None, email_encode='utf-8',
