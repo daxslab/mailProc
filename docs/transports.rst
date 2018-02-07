@@ -95,10 +95,10 @@ method which will close the connection with the server.
 
 
 File Sender Transport
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 The :class:`~mailproc.transports.FileSenderTransport` class creates raw emails
-in a directory. Among other transports, the :func:`~mailproc.transports.FileSenderTransport.connect`
+in a directory. Unlike other transports, the :func:`~mailproc.transports.FileSenderTransport.connect`
 and :func:`~mailproc.transports.FileSenderTransport.close` methods don't need to be called.
 
 Example::
