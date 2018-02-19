@@ -51,21 +51,23 @@ class ImapIdleReceiverTransport(ImapReceiverTransport):
 
         self._retrieve_mails(callback, get_msgs_type=get_msgs_type, delete=delete)
 
-        self.connection.send("%s IDLE\r\n"%(self.connection._new_tag()))
+        idle_command = "{0} IDLE\r\n".format(self.connection._new_tag().decode())
+
+        self.connection.send(idle_command.encode())
         logging.info("waiting for new mail...")
 
         while True:
             line = self.connection.readline().strip()
-            print("akakakakak", line)
-            if line.startswith('* BYE ') or (len(line) == 0):
+            if line.startswith('* BYE '.encode()) or (len(line) == 0):
                 logging.info("leaving...")
                 break
-            if line.endswith('EXISTS'):
+            if line.endswith('EXISTS'.encode()):
                 logging.info("NEW MAIL ARRIVED!")
-                self.connection.send('DONE\r\n')
+                self.connection.send('DONE\r\n'.encode())
 
                 self._retrieve_mails(callback, get_msgs_type=get_msgs_type, delete=delete)
-                self.connection.send("%s IDLE\r\n" % (self.connection._new_tag()))
+                idle_command = "{0} IDLE\r\n".format(self.connection._new_tag().decode())
+                self.connection.send(idle_command.encode())
 
 
 
