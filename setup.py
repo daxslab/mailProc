@@ -22,8 +22,8 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
 
-        'Intended Audience :: Developers'
-        'Topic :: Software Development :: Libraries :: Application Frameworks'
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
 
         # Pick your license as you wish
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
