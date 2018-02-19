@@ -29,5 +29,5 @@ jobs:
       password:
         secure: PQm+QMC3diMrJdgfymCncxffLWew28EOGTa9D59wFi6H2mDpufoZXMWVwYeb9obqklPRl1K5lUcfbidwSG8VkqRsXYaEjSfvEbGDPC1QZNqZUAjeKD8aSJYiHSePc15NxzdP1Ab8XqQFvOX28UvvBDpLUSMAmRO3/9KNO28Ve0EokyFKRI3kIptGt/7X3lEHEyr/LSMerD5Uqgubnk7i4yLmJLbGTZiylqIo1uomjTJg/tmQFqOvRFFDBrR+GH/NJEEHzbp5+FYMRvdCsoezm6FoEnzHH7imTHVGZj0KbKScuxaWUk50pHt1fdWB4OiF8wcu3hM2C8L54+dMRi2FNCUqXDYK47uY1oN0s7erAE8Ie7ttirAfnuZO0FnWwakzK3omdXL95Xz+viLpG6Sazzgb4seZTwm8n9lCTYuPPIAlgf+tMV/ScztVeaqYPvDaQsRHBwdyySl3lVKVYWe7mMu+cIBC7TrTHOe6/tXfU5EXzPgo5coVWc4HQ6WiJPQGsXZjNl48IGyPWE0DvrO34AHxy/f2jlvgycyV4I8iHOW5kUqMIbw8LnGA28Y9y/3kNvdRXFb82rP6T8iirR6N88Y6a/spYMNe+NPwX796XFzSrQOpt89V0dVbS0sMH+qopE36OvboI0DsBFlNa4p1dr/cNZ4NL9TPjV4g3DOcjf4=
       on:
-        branch: master
+        all_branches: true
 
