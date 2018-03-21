@@ -60,7 +60,7 @@ Imap Idle Receiver Transport
 
 The :class:`~mailproc.transports.ImapIdleReceiverTransport` class aims to establish
 an IDLE connection to an IMAP server for a fast and efficient email retrieving.
-The :func:`~mailproc.transports.BaseReceiverTransport.get_mails` method will require
+The new :class:`~mailproc.transports.ImapIdleReceiverTransport` object will require
 a callback function to be passed as argument for running actions on every new
 obtained email.
 
@@ -74,12 +74,13 @@ Example::
     receiver_transport = ImapIdleReceiverTransport(
         "imap.server.com",
         "imap_username",
-        "imap_password"
+        "imap_password",
+        app.run
     )
 
     receiver_transport.connect()
 
-    receiver_transport.get_mails(app.run)
+    receiver_transport.get_mails()
 
     receiver_transport.close()
 
