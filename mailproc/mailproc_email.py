@@ -99,7 +99,7 @@ class Email(Message):
         body = ''
         for part in self._walk_email():
             if part.get_content_type() == content_type:
-                body += part.get_payload(decode=1)
+                body += part.get_payload(decode=1).decode(part.get_content_charset())
         return body
 
     def get_json_attachment(self, attachment_name=None, attachment_content_type=None,
