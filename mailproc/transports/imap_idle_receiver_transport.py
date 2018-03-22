@@ -21,8 +21,6 @@ from mailproc.transports import ImapReceiverTransport
 
 class ImapIdleReceiverTransport(ImapReceiverTransport):
     """
-    .. warning:: Experimental
-
     IMAP Idle Receiver Transport. This class instances a receiver object for the IMAP
     protocol which uses the IMAP IDLE check for obtaining new emails
 

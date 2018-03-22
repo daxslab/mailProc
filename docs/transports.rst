@@ -56,8 +56,6 @@ Example::
 Imap Idle Receiver Transport
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning:: Experimental
-
 The :class:`~mailproc.transports.ImapIdleReceiverTransport` class aims to establish
 an IDLE connection to an IMAP server for a fast and efficient email retrieving.
 The new :class:`~mailproc.transports.ImapIdleReceiverTransport` object will require
