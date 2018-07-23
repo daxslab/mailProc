@@ -58,7 +58,7 @@ class BaseSenderTransport:
         Send an email message with text only or multipart HTML body
 
         :param email_from: 'From' email address
-        :param email_to:  Email 'To' address
+        :param email_to:  Email 'To' address, List of string also allowed
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
@@ -72,7 +72,10 @@ class BaseSenderTransport:
 
         msg_root['Subject'] = email_subject
         msg_root['From'] = email_from
-        msg_root['To'] = email_to
+        if isinstance(email_to, str):
+            msg_root['To'] = email_to
+        else:
+            msg_root['To'] = ', '.join(email_to)
 
         if email_html:
             msg_alternative = MIMEMultipart('alternative')

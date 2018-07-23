@@ -69,7 +69,7 @@ class SmtpSenderTransport(BaseSenderTransport):
         Send an email message with text only or multipart HTML body
 
         :param email_from: 'From' email address
-        :param email_to:  Email 'To' address
+        :param email_to:  Email 'To' address, List of string also allowed
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
@@ -80,8 +80,10 @@ class SmtpSenderTransport(BaseSenderTransport):
         :param json_attachment_base64_encode: Apply a base64 encode to JSON file (default False)
         :param json_attachment_gzip: Send JSON attachment as gzip file (default False)
         """
+        if isinstance(email_to, str):
+            email_to = [email_to]
         if not log:
-            log = email_to
+            log = ', '.join(email_to)
         try:
 
             msg_root = self.create_message(email_from, email_to, email_subject, email_text, email_html=email_html,
@@ -90,7 +92,7 @@ class SmtpSenderTransport(BaseSenderTransport):
                                            json_attachment_base64_encode=json_attachment_base64_encode,
                                            json_attachment_gzip=json_attachment_gzip)
 
-            self.connection.sendmail(email_from, [email_to], msg_root.as_string())
+            self.connection.sendmail(email_from, email_to, msg_root.as_string())
 
             logging.info('SEND {0}'.format(log))
             return True

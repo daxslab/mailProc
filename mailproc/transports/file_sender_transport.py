@@ -48,7 +48,7 @@ class FileSenderTransport(BaseSenderTransport):
         constructor parameter path
 
         :param email_from: 'From' email address
-        :param email_to:  Email 'To' address
+        :param email_to:  Email 'To' address, List of string also allowed
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
@@ -59,6 +59,8 @@ class FileSenderTransport(BaseSenderTransport):
         :param json_attachment_base64_encode: Apply a base64 encode to JSON file (default False)
         :param json_attachment_gzip: Send JSON attachment as gzip file (default False)
         """
+        if isinstance(email_to, str):
+            email_to = [email_to]
         if not log:
             log = email_to
         try:
