@@ -108,7 +108,7 @@ Example::
 
     sender_transport.send_mail(
         "fromaddres@example.com",
-        "toaddres@example.com",
+        ["toaddres@example.com"],
         "subject",
         "body"
     )
@@ -134,7 +134,7 @@ Example::
 
     sender_transport.send_mail(
         "fromaddres@example.com",
-        "toaddres@example.com",
+        ["toaddres@example.com"],
         "subject",
         "body"
     )
