@@ -40,8 +40,8 @@ class FileSenderTransport(BaseSenderTransport):
     def close(self):
         pass
 
-    def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_encode='utf-8',
-                  log=None, json_attachment=None, json_attachment_filename='attachment.json',
+    def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_bcc=None,
+                  email_encode='utf-8', log=None, json_attachment=None, json_attachment_filename='attachment.json',
                   json_attachment_base64_encode=False, json_attachment_gzip=False):
         """
         Save an email message with text only or multipart HTML body in `directory`
@@ -66,7 +66,8 @@ class FileSenderTransport(BaseSenderTransport):
         try:
 
             msg_root = self.create_message(email_from, email_to, email_subject, email_text, email_html=email_html,
-                                           email_encode=email_encode, json_attachment=json_attachment,
+                                           email_bcc=email_bcc, email_encode=email_encode,
+                                           json_attachment=json_attachment,
                                            json_attachment_filename=json_attachment_filename,
                                            json_attachment_base64_encode=json_attachment_base64_encode,
                                            json_attachment_gzip=json_attachment_gzip)

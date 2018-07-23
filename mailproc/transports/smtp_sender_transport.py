@@ -62,8 +62,8 @@ class SmtpSenderTransport(BaseSenderTransport):
         """
         self.connection.quit()
 
-    def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_encode='utf-8',
-                  log=None, json_attachment=None, json_attachment_filename='attachment.json',
+    def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_bcc=None,
+                  email_encode='utf-8', log=None, json_attachment=None, json_attachment_filename='attachment.json',
                   json_attachment_base64_encode=False, json_attachment_gzip=False):
         """
         Send an email message with text only or multipart HTML body
@@ -73,6 +73,7 @@ class SmtpSenderTransport(BaseSenderTransport):
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
+        :param email_bcc: List of Blind Carbon Copy (BCC) addresses
         :param email_encode: Email encode (default utf-8)
         :param log: Log message (default None)
         :param json_attachment: JSON Object to send as a JSON attachment file
@@ -80,19 +81,23 @@ class SmtpSenderTransport(BaseSenderTransport):
         :param json_attachment_base64_encode: Apply a base64 encode to JSON file (default False)
         :param json_attachment_gzip: Send JSON attachment as gzip file (default False)
         """
+        all_send_addresses = []
         if isinstance(email_to, str):
             email_to = [email_to]
+        if email_bcc:
+            all_send_addresses = email_to + email_bcc
         if not log:
             log = ', '.join(email_to)
         try:
 
             msg_root = self.create_message(email_from, email_to, email_subject, email_text, email_html=email_html,
-                                           email_encode=email_encode, json_attachment=json_attachment,
+                                           email_bcc=email_bcc, email_encode=email_encode,
+                                           json_attachment=json_attachment,
                                            json_attachment_filename=json_attachment_filename,
                                            json_attachment_base64_encode=json_attachment_base64_encode,
                                            json_attachment_gzip=json_attachment_gzip)
 
-            self.connection.sendmail(email_from, email_to, msg_root.as_string())
+            self.connection.sendmail(email_from, all_send_addresses, msg_root.as_string())
 
             logging.info('SEND {0}'.format(log))
             return True
