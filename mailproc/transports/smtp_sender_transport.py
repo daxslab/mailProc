@@ -84,8 +84,9 @@ class SmtpSenderTransport(BaseSenderTransport):
         all_send_addresses = []
         if isinstance(email_to, str):
             email_to = [email_to]
+        all_send_addresses += email_to
         if email_bcc:
-            all_send_addresses = email_to + email_bcc
+            all_send_addresses += email_bcc
         if not log:
             log = ', '.join(email_to)
         try:
