@@ -52,6 +52,7 @@ class FileSenderTransport(BaseSenderTransport):
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
+        :param email_bcc: List of Blind Carbon Copy (BCC) addresses
         :param email_encode: Email encode (default utf-8)
         :param log: Log message (default None)
         :param json_attachment: JSON Object to send as a JSON attachment file
