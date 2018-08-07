@@ -40,8 +40,8 @@ class FileSenderTransport(BaseSenderTransport):
     def close(self):
         pass
 
-    def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_encode='utf-8',
-                  log=None, json_attachment=None, json_attachment_filename='attachment.json',
+    def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_bcc=None,
+                  email_encode='utf-8', log=None, json_attachment=None, json_attachment_filename='attachment.json',
                   json_attachment_base64_encode=False, json_attachment_gzip=False):
         """
         Save an email message with text only or multipart HTML body in `directory`
@@ -52,6 +52,7 @@ class FileSenderTransport(BaseSenderTransport):
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
+        :param email_bcc: List of Blind Carbon Copy (BCC) addresses
         :param email_encode: Email encode (default utf-8)
         :param log: Log message (default None)
         :param json_attachment: JSON Object to send as a JSON attachment file
@@ -66,7 +67,8 @@ class FileSenderTransport(BaseSenderTransport):
         try:
 
             msg_root = self.create_message(email_from, email_to, email_subject, email_text, email_html=email_html,
-                                           email_encode=email_encode, json_attachment=json_attachment,
+                                           email_bcc=email_bcc, email_encode=email_encode,
+                                           json_attachment=json_attachment,
                                            json_attachment_filename=json_attachment_filename,
                                            json_attachment_base64_encode=json_attachment_base64_encode,
                                            json_attachment_gzip=json_attachment_gzip)

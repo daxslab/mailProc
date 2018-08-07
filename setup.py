@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mailProc',
-    version='0.3.0',
+    version='0.4.0',
     packages=['mailproc', 'mailproc.transports'],
     url='https://github.com/daxslab/mailproc',
     license='LGPL 3.0',

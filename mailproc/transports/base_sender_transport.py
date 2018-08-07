@@ -51,8 +51,8 @@ class BaseSenderTransport:
         """
         pass
 
-    def create_message(self, email_from, email_to, email_subject, email_text, email_html=None, email_encode='utf-8',
-                       json_attachment=None, json_attachment_filename='attachment.json',
+    def create_message(self, email_from, email_to, email_subject, email_text, email_html=None, email_bcc=None,
+                       email_encode='utf-8', json_attachment=None, json_attachment_filename='attachment.json',
                        json_attachment_base64_encode=False, json_attachment_gzip=False):
         """
         Send an email message with text only or multipart HTML body
@@ -62,6 +62,7 @@ class BaseSenderTransport:
         :param email_subject: Email subject
         :param email_text: Text only mail body
         :param email_html: HTML mail body
+        :param email_bcc: List of Blind Carbon Copy (BCC) addresses
         :param email_encode: Email encode (default utf-8)
         :param json_attachment: JSON Object to send as a JSON attachment file
         :param json_attachment_filename: JSON attachment filename (default attachment.json)
@@ -76,6 +77,9 @@ class BaseSenderTransport:
             msg_root['To'] = email_to
         else:
             msg_root['To'] = ', '.join(email_to)
+        if email_bcc:
+            msg_root['Bcc'] = ', '.join(email_bcc)
+
 
         if email_html:
             msg_alternative = MIMEMultipart('alternative')
