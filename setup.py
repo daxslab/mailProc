@@ -9,7 +9,7 @@ Mail services creation microframework http://mailproc.readthedocs.io
 
 setup(
     name='mailProc',
-    version='0.4.1',
+    version='0.5.0',
     packages=['mailproc', 'mailproc.transports'],
     url='https://github.com/daxslab/mailproc',
     license='LGPL 3.0',
