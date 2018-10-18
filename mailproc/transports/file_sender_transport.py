@@ -31,10 +31,10 @@ class FileSenderTransport(BaseSenderTransport):
     :param directory: Directory path for saving raw emails in file system.
     """
 
-    def __init__(self, directory):
+    def __init__(self, directory, **kwargs):
         self.directory = directory
 
-    def connect(self):
+    def connect(self, **kwargs):
         pass
 
     def close(self):
@@ -42,7 +42,7 @@ class FileSenderTransport(BaseSenderTransport):
 
     def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_bcc=None,
                   email_encode='utf-8', log=None, json_attachment=None, json_attachment_filename='attachment.json',
-                  json_attachment_base64_encode=False, json_attachment_gzip=False):
+                  json_attachment_base64_encode=False, json_attachment_gzip=False, **kwargs):
         """
         Save an email message with text only or multipart HTML body in `directory`
         constructor parameter path

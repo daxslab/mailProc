@@ -22,16 +22,16 @@ class FileReceiverTransport(BaseReceiverTransport):
     :param directory: Directory path for obtaining raw emails in file system.
     """
 
-    def __init__(self, directory):
+    def __init__(self, directory, **kwargs):
         self.directory = directory
 
-    def connect(self):
+    def connect(self, **kwargs):
         pass
 
     def close(self):
         pass
 
-    def get_mails(self, extension='.eml', delete=False):
+    def get_mails(self, extension='.eml', delete=False, **kwargs):
         """
         Returns mails stored in `directory` constructor parameter
 

@@ -28,7 +28,7 @@ class ImapReceiverTransport(BaseReceiverTransport):
     :param use_ssl: Use ssl connection. Default: True
     """
 
-    def __init__(self, server, username, password, port=None, use_ssl=True):
+    def __init__(self, server, username, password, port=None, use_ssl=True, **kwargs):
         self.server = server
         self.username = username
         self.password = password
@@ -36,7 +36,7 @@ class ImapReceiverTransport(BaseReceiverTransport):
         self.use_ssl = use_ssl
         self.connection = None
 
-    def connect(self):
+    def connect(self, **kwargs):
         """
         Starts a new IMAP connection
         """
@@ -64,7 +64,7 @@ class ImapReceiverTransport(BaseReceiverTransport):
         self.connection.logout()
         logging.info('IMAP connection to {0} for {1} closed'.format(self.server, self.username))
 
-    def get_mails(self, get_msgs_type='(UNSEEN)', mailbox="INBOX", delete=False):
+    def get_mails(self, get_msgs_type='(UNSEEN)', mailbox="INBOX", delete=False, **kwargs):
         """
         Returns new (unseen) mails from account
 

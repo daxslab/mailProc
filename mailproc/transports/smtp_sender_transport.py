@@ -30,7 +30,7 @@ class SmtpSenderTransport(BaseSenderTransport):
         :param use_tls: Use tls secure connection. Default: False
         """
 
-    def __init__(self, server, username, password, port=None, use_ssl=True, use_tls=False):
+    def __init__(self, server, username, password, port=None, use_ssl=True, use_tls=False, **kwargs):
         self.server = server
         self.username = username
         self.password = password
@@ -64,7 +64,7 @@ class SmtpSenderTransport(BaseSenderTransport):
 
     def send_mail(self, email_from, email_to, email_subject, email_text, email_html=None, email_bcc=None,
                   email_encode='utf-8', log=None, json_attachment=None, json_attachment_filename='attachment.json',
-                  json_attachment_base64_encode=False, json_attachment_gzip=False):
+                  json_attachment_base64_encode=False, json_attachment_gzip=False, **kwargs):
         """
         Send an email message with text only or multipart HTML body
 

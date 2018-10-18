@@ -35,7 +35,7 @@ class ImapIdleReceiverTransport(ImapReceiverTransport):
     """
 
     def __init__(self, server, username, password, callback,
-                 port=None, use_ssl=True, idle_timeout=60*8, idle_loop=True):
+                 port=None, use_ssl=True, idle_timeout=60*8, idle_loop=True, **kwargs):
         super(ImapIdleReceiverTransport, self).__init__(server, username, password, port, use_ssl)
 
         self.callback = callback
@@ -44,7 +44,7 @@ class ImapIdleReceiverTransport(ImapReceiverTransport):
         self.idle_tag = None
         self.idle_loop = idle_loop
 
-    def get_mails(self, get_msgs_type='(UNSEEN)', mailbox="INBOX", delete=False):
+    def get_mails(self, get_msgs_type='(UNSEEN)', mailbox="INBOX", delete=False, **kwargs):
         """
         Starts monitoring an IMAP inbox for incoming emails
 
