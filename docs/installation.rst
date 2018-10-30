@@ -12,7 +12,7 @@ and newer
 Dependencies
 ------------
 
-mailProc has no external dependencies, but for framework development tasks as buld docs or testing you will need:
+mailProc has no external dependencies, but for framework development tasks such as building docs or running tests you will need:
 
 * `pytest`_ framework, makes it easy to write small tests, yet scales to support complex
   functional testing for applications and libraries.
