@@ -4,8 +4,8 @@
 name: Python application
 
 on:
-  push:
-    tags: ["releases/*"]
+  release:
+    types: [published]
 
 permissions:
   contents: read
