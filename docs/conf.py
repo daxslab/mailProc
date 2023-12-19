@@ -34,8 +34,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx',
-    'sphinx_rtd_theme'
+    'sphinx.ext.intersphinx'
 ]
 
 # intersphinx_mapping = {'python': ('https://docs.python.org/3.6', None)}
