@@ -7,12 +7,7 @@
     :copyright: (c) 2018 Daxslab.
     :license: LGPL, see LICENSE for more details.
 """
-import sys
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO, BytesIO
+from io import BytesIO
 import base64
 import json
 import gzip
@@ -99,21 +94,12 @@ class BaseSenderTransport:
 
         if json_attachment:
 
-            json_string = json.dumps(json_attachment)
-
-            if sys.version_info >= (3, 0):
-                json_string = json_string.encode(email_encode)
+            json_string = json.dumps(json_attachment).encode(email_encode)
 
             if json_attachment_base64_encode:
-                if sys.version_info >= (3, 0):
-                    json_string = base64.encodebytes(json_string)
-                else:
-                    json_string = base64.encodestring(json_string)
+                json_string = base64.encodebytes(json_string)
             if json_attachment_gzip:
-                if sys.version_info >= (3, 0):
-                    out = BytesIO()
-                else:
-                    out = StringIO()
+                out = BytesIO()
                 f = gzip.GzipFile(fileobj=out, mode="w")
                 f.write(json_string)
                 f.close()
@@ -128,10 +114,7 @@ class BaseSenderTransport:
                 msg_root.attach(attachment)
 
             else:
-                if sys.version_info >= (3, 0):
-                    attachment = MIMEText(json_string.decode(email_encode))
-                else:
-                    attachment = MIMEText(json_string)
+                attachment = MIMEText(json_string.decode(email_encode))
                 attachment.add_header('Content-Disposition', 'attachment', filename=json_attachment_filename)
                 msg_root.attach(attachment)
 

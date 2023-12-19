@@ -26,6 +26,7 @@ def test_send(app):
 
     assert len(os.listdir(TMP_DIR)) == 2
 
+
 def test_receive(app):
     receiver_transport = FileReceiverTransport(TMP_DIR)
     assert len(receiver_transport.get_mails()) == 2
@@ -46,7 +47,7 @@ def test_run(app):
         global count_from
         count_from += 1
         mail.__class__ = Email
-        assert name==mail.get_from_address().split('@')[0]
+        assert name == mail.get_from_address().split('@')[0]
 
     @app.route_subject('hello <part>')
     def testing_subject_hello(part, mail):

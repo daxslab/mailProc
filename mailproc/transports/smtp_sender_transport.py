@@ -7,10 +7,6 @@
     :copyright: (c) 2018 Daxslab.
     :license: LGPL, see LICENSE for more details.
 """
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 import logging
 import smtplib
 

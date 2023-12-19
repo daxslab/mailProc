@@ -8,10 +8,7 @@
     :license: LGPL, see LICENSE for more details.
 """
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO, BytesIO
+from io import StringIO
 import sys
 import base64
 import gzip
@@ -99,7 +96,7 @@ class Email(Message):
         body = ''
         for part in self._walk_email():
             if part.get_content_type() == content_type:
-                body += part.get_payload(decode=1).decode(part.get_content_charset())
+                body += part.get_payload(decode=True).decode(part.get_content_charset())
         return body
 
     def get_json_attachment(self, attachment_name=None, attachment_content_type=None,
@@ -139,14 +136,7 @@ class Email(Message):
             # decompress gzipped file
             if gzipped:
                 try:
-                    if sys.version_info >= (3, 0):
-                        body = gzip.decompress(body)
-                    else:
-                        infile = StringIO()
-                        infile.write(body)
-                        f = gzip.GzipFile(fileobj=infile, mode="r")
-                        f.rewind()
-                        body = f.read()
+                    body = gzip.decompress(body)
                 except ValueError as e:
                     logging.error('get_json_attachment gzip error: {0}'.format(e))
                     continue
@@ -157,10 +147,7 @@ class Email(Message):
 
             # check if is a json string
             try:
-                if sys.version_info >= (3, 0):
-                    return json.loads(body.decode(email_encode))
-                else:
-                    return json.loads(body)
+                return json.loads(body.decode(email_encode))
             except ValueError as e:
                 logging.error('get_json_attachment json error: {0}'.format(e))
                 continue
