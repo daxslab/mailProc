@@ -1,11 +1,7 @@
 from setuptools import setup
 
-long_description = """\
-mailProc
-========
-
-Mail services creation microframework http://mailproc.readthedocs.io
-"""
+with open('README.md') as f:
+    long_description = f.read()
 
 setup(
     name='mailProc',
@@ -17,6 +13,7 @@ setup(
     author_email='ccesar@daxslab.com',
     description='Mail services creation microframework',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     platforms='any',
     python_requires='>=3.4, <4',
     extras_require={
@@ -39,15 +36,11 @@ setup(
 
         # Specify the Python versions you support here.
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
-        'Programming Language :: Python :: 3.13',
     ]
 )
