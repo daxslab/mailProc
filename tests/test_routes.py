@@ -22,6 +22,7 @@ def test_from_routes(app, static_dir):
     app.run([msg])
     assert count_from == 1
 
+
 def test_subject_routes(app, static_dir):
     global count_subject
     count_subject = 0

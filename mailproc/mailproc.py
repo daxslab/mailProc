@@ -7,23 +7,19 @@
     :copyright: (c) 2018 Daxslab.
     :license: LGPL, see LICENSE for more details.
 """
+import atexit
 import copy
 from email.message import Message
-
-from .mailproc_email import Email
-from .exceptions import MessageInstanceError
-from .exceptions import RouteError
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-import atexit
 import logging
 import os
 import re
 import sys
 import tempfile
+
+from .mailproc_email import Email
+from .exceptions import MessageInstanceError
+from .exceptions import RouteError
+
 
 APP_NAME = "mailproc"
 TMP_DIR = os.path.join(tempfile.gettempdir())
@@ -100,10 +96,7 @@ class Mailproc:
         """
         try:
             from ctypes import cdll, byref, create_string_buffer
-            if sys.version_info >= (3, 0):
-                from ctypes import create_unicode_buffer as create_buffer
-            else:
-                from ctypes import create_string_buffer as create_buffer
+            from ctypes import create_unicode_buffer as create_buffer
             libc = cdll.LoadLibrary('libc.so.6')
             buff = create_buffer(len(new_name) + 1)
             buff.value = new_name
