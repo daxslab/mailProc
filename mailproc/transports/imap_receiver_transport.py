@@ -82,7 +82,7 @@ class ImapReceiverTransport(BaseReceiverTransport):
             mails.append(email_message)
         # Post Process
         for e_id in unread_msg_nums:
-            self.connection.store(e_id, '+FLAGS', '\Seen')
+            self.connection.store(e_id, '+FLAGS', r'\Seen')
             if delete:
                 self.connection.store(e_id, '+FLAGS', '\\Deleted')
         if delete:
