@@ -6,7 +6,7 @@ Installation
 Python Version
 --------------
 
-We recommend using the latest version of Python 3. mailProc supports Python 2.6, 2.7, 3.4
+We recommend using the latest version of Python 3. mailProc supports Python 3.4
 and newer
 
 Dependencies
